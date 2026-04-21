@@ -1,0 +1,15 @@
+# Backend
+
+fastapi
+uvicorn
+sqlalchemy
+python-dotenv
+
+# Frontend (PyQt5 app)
+PyQt5
+PyQtWebEngine
+
+# Utilities
+requests
+marked
+jsPDF

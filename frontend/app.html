@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Code Thinker - Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#38bdf8">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+body{
+  background:#020617;
+  color:#e5e7eb;
+  height:100vh;
+  overflow:hidden;
+  transition:.3s;
+}
+body.light{
+  background:#f8fafc;
+  color:#020617;
+}
+body.light .sidebar,
+body.light .welcome-box{
+  background:#ffffff;
+}
+body.light .answer-box{
+  background:#ffffff;
+  color:#020617;
+  border-color:#38bdf8;
+  box-shadow:
+    0 0 15px #38bdf8,
+    0 0 30px rgba(125,211,252,.6);
+}
+header{
+  text-align:center;
+  padding:25px 20px 10px;
+  font-size:48px;
+  font-weight:900;
+  letter-spacing:4px;
+  color:#38bdf8;
+  text-shadow:0 0 10px rgba(56,189,248,.8),
+              0 0 25px rgba(56,189,248,.6);
+}
+.container{display:flex;height:calc(100vh - 90px);}
+.sidebar{
+  width:280px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  background:rgba(15,23,42,0.75);
+  border-right:2px solid #38bdf8;
+}
+.welcome-box{
+  background:linear-gradient(135deg,#0f172a,#020617);
+  padding:18px;
+  border-radius:15px;
+  text-align:center;
+  border:1px solid #38bdf8;
+}
+.welcome-title{font-size:13px;color:#94a3b8;}
+.welcome-user{font-size:22px;font-weight:bold;color:#38bdf8;}
+.saved-box{flex:1;overflow-y:auto;}
+.saved-box h4{color:#38bdf8;font-size:14px;margin-bottom:10px;}
+.saved-box ul{list-style:none;margin-top:10px;}
+.saved-box li{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px;
+  background:rgba(30,41,59,0.4);
+  border-radius:8px;
+  margin-bottom:6px;
+  cursor:pointer;
+}
+.saved-box li:hover{background:rgba(56,189,248,0.25);}
+.saved-box li span{flex:1;}
+.saved-box li button{
+  background:none;
+  border:none;
+  color:#ef4444;
+  font-size:16px;
+  cursor:pointer;
+}
+.logout{
+  margin-top:auto;
+  padding:10px;
+  background:#ef4444;
+  border:none;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+}
+.main{
+  flex:1;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.answer-box{
+  flex:1;
+  padding:20px;
+  border-radius:14px;
+  background:#000;
+  color:#d1d5db;
+  overflow-y:auto;
+  border:2px solid #38bdf8;
+  box-shadow:
+    0 0 15px #38bdf8,
+    0 0 30px rgba(125,211,252,.8);
+}
+.input-container{
+  display:flex;
+  gap:12px;
+  margin:15px 0;
+}
+#note {
+  flex:1;
+  padding:20px;
+  border-radius:14px;
+  background:#000;
+  color:#f0f0f0;
+  resize:none;
+  border:2px solid #38bdf8;
+  font-size:18px;
+  font-weight:600;
+  font-family:'Segoe UI',Tahoma,sans-serif;
+  line-height:1.6;
+  box-shadow:
+    0 0 15px #38bdf8,
+    0 0 30px rgba(125,211,252,.8);
+  transition:0.3s;
+}
+#note:focus{
+  outline:none;
+  border-color:#7dd3fc;
+  box-shadow:
+    0 0 20px #38bdf8,
+    0 0 35px rgba(125,211,252,.9);
+}
+body.light #note {
+  background:#ffffff;
+  color:#020617;
+  border-color:#38bdf8;
+  font-weight:600;
+  box-shadow:
+    0 0 15px #38bdf8,
+    0 0 30px rgba(125,211,252,.6);
+}
+#note:focus{
+  outline:none;
+  box-shadow:
+    0 0 15px #38bdf8,
+    0 0 30px rgba(125,211,252,.9),
+    inset 0 0 12px rgba(56,189,248,.3);
+}
+#sendBtn{
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  border:2px solid #38bdf8;
+  background:#020617;
+  color:#38bdf8;
+  font-size:22px;
+  cursor:pointer;
+  box-shadow:0 0 15px rgba(56,189,248,.8);
+}
+#sendBtn:hover{
+  background:#38bdf8;
+  color:#020617;
+}
+.buttons{display:flex;gap:10px;}
+.buttons button{
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.delete{background:#ef4444;color:white;}
+.pdf{background:#f59e0b;color:white;}
+.loader{
+  border:4px solid #1e293b;
+  border-top:4px solid #38bdf8;
+  border-radius:50%;
+  width:30px;height:30px;
+  animation:spin 1s linear infinite;
+}
+#modeBtn {
+  width: 100%;
+  padding: 10px;
+  background: #38bdf8;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+#modeBtn:hover {
+  background: #0ea5e9;
+}
+
+
+.lang-buttons{
+  display:flex;
+  gap:8px;
+}
+
+.lang-buttons button{
+  flex:1;
+  padding:14px 0;
+  font-size:16px;
+  font-weight:900;
+  border-radius:10px;
+  border:2px solid #38bdf8;
+  background:#020617;
+  color:#38bdf8;
+  cursor:pointer;
+  transition:0.25s;
+}
+
+.lang-buttons button:hover{
+  background:#38bdf8;
+  color:#020617;
+}
+
+.lang-buttons button.active{
+  background:#38bdf8;
+  color:#020617;
+  box-shadow:0 0 12px rgba(56,189,248,.9);
+}
+
+body.light .lang-buttons button{
+  background:#ffffff;
+  color:#020617;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+  <header id="appTitle">🧠 Code Thinker 🧠</header>
+
+<div class="container">
+  <div class="sidebar">
+    <div class="welcome-box">
+      <div class="welcome-title">Welcome </div>
+      <div class="welcome-user" id="usernameDisplay"></div>
+    </div>
+
+    <div class="saved-box">
+      <h4>📂 History</h4>
+      <ul id="savedList"></ul>
+    </div>
+
+    <button id="modeBtn">🌙</button>
+   
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="main">
+    <div class="answer-box" id="output">
+     💡 Ready to dive into the world of Computer Science? Type your question
+    </div>
+
+    <div class="input-container">
+      <textarea id="note" rows="2"
+        placeholder="Type your Computer Science question here..."></textarea>
+      <button id="sendBtn" onclick="organize()">➤</button>
+    </div>
+
+    <div class="buttons">
+      <button class="delete" onclick="clearResult()">Clear</button>
+      <button class="pdf" onclick="exportPDF()">PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- المكتبات -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+const currentUser = localStorage.getItem("username");
+if(!currentUser) location.href="login.html";
+usernameDisplay.innerText = currentUser;
+
+/* ===== History ===== */
+async function loadHistory(){
+  const res = await fetch(`http://127.0.0.1:8000/results/${currentUser}`);
+  const data = await res.json();
+  savedList.innerHTML = "";
+
+  data.forEach(item => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${item.title}</span>
+                    <button onclick="deleteResult(event, ${item.id})">🗑️</button>`;
+    li.onclick = () => loadResult(item.id);
+    savedList.appendChild(li);
+  });
+}
+
+async function loadResult(id){
+  const res = await fetch(`http://127.0.0.1:8000/result/${id}`);
+  const data = await res.json();
+  output.innerHTML = marked.parse(data.content);
+}
+async function deleteResult(event, id){
+  event.stopPropagation(); // يمنع الضغط على li من تفعيل loadResult
+  const ok = confirm("Are you sure you want to delete this result?");
+  if(!ok) return;
+
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/result/${id}`, { method: "DELETE" });
+    if(!res.ok) throw new Error("Failed to delete");
+    loadHistory(); // تحديث قائمة النتائج بعد الحذف
+  } catch(err) {
+    alert("Error deleting result: " + err.message);
+  }
+}
+/* ===== Ask AI ===== */
+async function organize(){
+  const q = note.value.trim();
+  if(!q) return;
+  output.innerHTML = '<div class="loader"></div>';
+
+  const res = await fetch("http://127.0.0.1:8000/ask", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({question: q, username: currentUser})
+  });
+  const data = await res.json();
+  output.innerHTML = marked.parse(data.answer);
+  note.value = "";
+  loadHistory();
+}
+
+function clearResult(){
+  const ok = confirm("Are you sure you want to clear the output?");
+  if(!ok) return;
+  output.innerText = "💡 Ready to dive into the world of Computer Science? Type your question";
+}
+
+function logout(){
+  const ok = confirm("Are you sure you want to logout?");
+  if(!ok) return;
+  localStorage.removeItem("username");
+  location.href="login.html";
+}
+
+/* ===== PDF كامل مع تقسيم الصفحات ===== */
+async function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const element = document.getElementById("output");
+
+  const clone = element.cloneNode(true);
+  clone.style.height = "auto";
+  clone.style.maxHeight = "none";
+  clone.style.overflow = "visible";
+  clone.style.padding = "20px";
+  clone.style.backgroundColor = document.body.classList.contains("light") ? "#ffffff" : "#020617";
+  clone.style.color = document.body.classList.contains("light") ? "#020617" : "#d1d5db";
+  clone.style.boxShadow = "none";
+  clone.querySelectorAll("*").forEach(el => el.style.boxShadow = "none");
+  document.body.appendChild(clone);
+
+  const canvas = await html2canvas(clone, { scale: 2, useCORS: true, backgroundColor: null });
+  document.body.removeChild(clone);
+
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF({
+    orientation: canvas.width > canvas.height ? "landscape" : "portrait",
+    unit: "px",
+    format: [canvas.width, canvas.height]
+  });
+  pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+  pdf.save("CodeThinker.pdf");
+}
+
+/* ===== Dark/Light Mode ===== */
+const modeBtn = document.getElementById("modeBtn");
+if(localStorage.getItem("theme") === "light"){
+  document.body.classList.add("light");
+  modeBtn.textContent = "☀️";
+}
+modeBtn.onclick = () => {
+  document.body.classList.toggle("light");
+  const light = document.body.classList.contains("light");
+  localStorage.setItem("theme", light ? "light" : "dark");
+  modeBtn.textContent = light ? "☀️" : "🌙";
+};
+
+/* ===== Load History on start ===== */
+loadHistory();
+</script>
+</body>
+</html>

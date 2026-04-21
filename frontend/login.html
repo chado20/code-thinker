@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Code Thinker - AI Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI;
+}
+
+/* خلفية متحركة مع شبكة AI */
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(-45deg,#020617,#0f172a,#020617,#020617);
+  background-size:400% 400%;
+  animation:bgMove 12s infinite linear;
+  color:white;
+  overflow:hidden;
+  position:relative;
+}
+
+.grid{
+  position:absolute;
+  width:100%;
+  height:100%;
+  background-image:
+  linear-gradient(rgba(56,189,248,.05) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(56,189,248,.05) 1px, transparent 1px);
+  background-size:40px 40px;
+  z-index:-1;
+}
+
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* دوائر AI */
+body::before{
+  content:"";
+  position:absolute;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,#38bdf8,transparent 70%);
+  top:-200px;
+  left:-200px;
+  opacity:.2;
+  animation:move1 10s infinite alternate;
+}
+
+body::after{
+  content:"";
+  position:absolute;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,#22c55e,transparent 70%);
+  bottom:-200px;
+  right:-200px;
+  opacity:.2;
+  animation:move2 10s infinite alternate;
+}
+
+@keyframes move1{
+  from{transform:translate(0,0)}
+  to{transform:translate(200px,200px)}
+}
+
+@keyframes move2{
+  from{transform:translate(0,0)}
+  to{transform:translate(-200px,-200px)}
+}
+
+/* صندوق login */
+.container{
+  position:relative;
+  width:360px;
+  padding:35px;
+  background:rgba(15,23,42,.8);
+  backdrop-filter:blur(15px);
+  border-radius:15px;
+  box-shadow:
+    0 0 20px #38bdf8,
+    0 0 40px rgba(56,189,248,.5);
+  text-align:center;
+  z-index:1;
+}
+
+/* AI Title */
+.aiTitle{
+  font-size:32px;
+  background:linear-gradient(90deg,#38bdf8,#22c55e,#38bdf8);
+  background-size:200%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:aiGlow 4s infinite linear;
+}
+
+@keyframes aiGlow{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+.subtitle{
+  font-size:14px;
+  margin-bottom:20px;
+  color:#94a3b8;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  border:1px solid #38bdf8;
+  background:#020617;
+  color:white;
+  transition:.3s;
+}
+
+input:focus{
+  outline:none;
+  box-shadow:0 0 10px #38bdf8;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:12px;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.loginBtn{
+  background:#38bdf8;
+  color:#020617;
+}
+
+.registerBtn{
+  background:#22c55e;
+  color:white;
+}
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 10px #38bdf8;
+}
+
+.msg{
+  margin-top:12px;
+  font-size:14px;
+  color:#facc15;
+}
+
+/* Password eye */
+.passwordBox{
+  position:relative;
+}
+
+.passwordBox input{
+  padding-right:40px;
+}
+
+.eye{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  font-size:18px;
+  opacity:.7;
+}
+
+.eye:hover{
+  opacity:1;
+}
+</style>
+</head>
+
+<body>
+<div class="grid"></div> <!-- شبكة AI -->
+
+<div class="container">
+  <h1 class="aiTitle">🧠 Code Thinker</h1>
+  <p class="subtitle">Your Computer Science AI Assistant</p>
+
+  <input id="username" placeholder="Username">
+  <div class="passwordBox">
+    <input id="password" type="password" placeholder="Password">
+    <span class="eye" onclick="togglePassword()">👁</span>
+  </div>
+
+  <button class="loginBtn" onclick="login()">Login</button>
+  <button class="registerBtn" onclick="register()">Create Account</button>
+
+  <div class="msg" id="msg"></div>
+</div>
+
+<script>
+async function login(){
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const msg = document.getElementById("msg");
+
+  if(!username || !password){
+    msg.innerText="Please enter username and password";
+    return;
+  }
+
+  try{
+    const res = await fetch("http://127.0.0.1:8000/login",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({username,password})
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+      localStorage.setItem("username", username);
+      location.href="app.html";
+    } else {
+      msg.innerText=data.detail;
+    }
+  }catch(err){
+    msg.innerText="Server error";
+  }
+}
+
+async function register(){
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const msg = document.getElementById("msg");
+
+  if(!username || !password){
+    msg.innerText="Please enter username and password";
+    return;
+  }
+
+  try{
+    const res = await fetch("http://127.0.0.1:8000/register",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({username,password})
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+      msg.innerText="Account created ✔ Now login";
+    } else {
+      msg.innerText=data.detail;
+    }
+  }catch(err){
+    msg.innerText="Server error";
+  }
+}
+
+function togglePassword(){
+  const password = document.getElementById("password");
+
+  if(password.type === "password"){
+    password.type = "text";
+  }else{
+    password.type = "password";
+  }
+}
+</script>
+</body>
+</html>
